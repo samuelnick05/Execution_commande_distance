@@ -1,8 +1,10 @@
-import java.io.*;
 import java.net.Socket;
+import java.io.BufferedReader;
+import java.io.PrintWriter;
+import java.io.InputStreamReader;
 import java.lang.ProcessBuilder;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class GestionnaireClient extends Thread {
     private Socket socket;
@@ -15,26 +17,30 @@ public class GestionnaireClient extends Thread {
         this.socket = socket;
 
     }
-    public String execute(String command) {
+    public void execute(String command) {
         ProcessBuilder pb = new ProcessBuilder("cmd.exe", "/c", command);
         pb.redirectErrorStream(true);
-        String result="";
+
         try {
             Process p = pb.start();
 
-            BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            result = reader.lines().collect(Collectors.joining("\n"));
-
+            BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream(), "CP850"));
+            String ligne;
+            while ((ligne = reader.readLine()) != null) {
+                out.println(ligne);
+            }
             p.waitFor();
+            out.println("--FIN--");
 
-            return result.isEmpty() ? "Commande exécuté avec succès mais aucune sortie" : result;
+
+
 
 
         } catch (Exception e) {
             System.out.println("erreur :" + e.getMessage());
 
         }
-        return result;
+
 
 
     }
@@ -46,17 +52,21 @@ public class GestionnaireClient extends Thread {
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
 
-            out.println("Vous avez vous connecte");// message de confirmation de connexion
+            out.println("Vous avez vous connecte"); // message de confirmation de connexion
             out.println("Entrez une commande (ex :ls, dir, ipconfig, ping");
 
             String message;
 
             while ((message = in.readLine()) != null) {
 
+                String log = LocalDateTime.now() + " | " +
+                        socket.getInetAddress() + " | " + message;
+                System.out.println(log);
+
                 String premier_mot = message.split(" ")[0];
                 if(commandes.contains(premier_mot )) {
-                    String reponse = execute(message);
-                    out.println(reponse);
+                   execute(message);
+
 
                 }
                 else {out.println("Commande non autorisée:"+premier_mot);

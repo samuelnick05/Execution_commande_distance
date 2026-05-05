@@ -14,11 +14,14 @@ public class Serveur {
         Socket socket;
         PrintWriter out;
         BufferedReader in;
+        String VERT   = "\u001B[32m";
+        String RESET  = "\u001B[0m";
+
 
 
         try {
             server =new ServerSocket(5000);
-        System.out.println("Serveur etabli sur le port 5000");
+        System.out.println(VERT+"Serveur etabli sur le port 5000"+RESET);
             while(true){
                 socket = server.accept();
                 System.out.println("Client connecte :"+socket.getInetAddress().getHostAddress());

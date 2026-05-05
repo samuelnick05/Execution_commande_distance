@@ -11,6 +11,10 @@ public class Client {
         Socket socket;
         PrintWriter out;
         BufferedReader in,clavier;
+        String VERT   = "\u001B[32m";
+        String RESET  = "\u001B[0m";
+
+
 
 
         try {
@@ -20,7 +24,8 @@ public class Client {
             clavier=new BufferedReader(new InputStreamReader(System.in));
 
 
-            System.out.println(in.readLine()); // message de confirmation de connexion
+            System.out.println(in.readLine());// message de confirmation de connexion
+            System.out.println(in.readLine());
 
             Thread envoi= new Thread(()-> {
                 while(true) {
@@ -39,9 +44,13 @@ public class Client {
             Thread reception =new Thread(()-> {
                 while(true) {
                     try {
-                        String message=in.readLine();
-                        System.out.println(" reponse du serveur :" + message);
-
+                        String message = in.readLine();
+                        if (message == null) break;
+                        if (message.equals("--FIN--")) {
+                            System.out.println("------------------");
+                        } else {
+                            System.out.println(VERT + " reponse du serveur : " + RESET + message);
+                        }
                     }
                     catch (Exception e) {
                         e.printStackTrace();
