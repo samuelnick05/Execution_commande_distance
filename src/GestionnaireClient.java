@@ -53,7 +53,7 @@ public class GestionnaireClient extends Thread {
 
 
             out.println("Vous avez vous connecte"); // message de confirmation de connexion
-            out.println("Entrez une commande (ex :ls, dir, ipconfig, ping");
+            out.println("Entrez une commande (ex :ls, dir, ipconfig, ping,help,exit ,etc...");
 
             String message;
 
@@ -63,13 +63,29 @@ public class GestionnaireClient extends Thread {
                         socket.getInetAddress() + " | " + message;
                 System.out.println(log);
 
+
+
                 String premier_mot = message.split(" ")[0];
-                if(commandes.contains(premier_mot )) {
+                if (message.equals("help"))
+                {
+                    out.println("Commandes autorisées :"+commandes);
+                    out.println("--FIN--");
+
+                }
+                else if (message.equals("exit"))
+                {
+                    out.println("Au revoir !");
+                    out.println("--FIN--");
+                    break;
+                }
+                else if(commandes.contains(premier_mot )) {
                    execute(message);
 
 
                 }
                 else {out.println("Commande non autorisée:"+premier_mot);
+                    out.println("--FIN--");
+
                 }
 
 
